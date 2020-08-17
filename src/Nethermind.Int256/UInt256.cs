@@ -186,17 +186,17 @@ namespace Nethermind.Int256
         public static int Len64(ulong x)
         {
             int n = 0;
-            if (x >= (((ulong)1) << 32))
+            if (x >= (1ul << 32))
             {
                 x >>= 32;
                 n = 32;
             }
-            if (x >= (((ulong)1) << 16))
+            if (x >= (1ul << 16))
             {
                 x >>= 16;
                 n += 16;
             }
-            if (x >= (((ulong)1) << 8))
+            if (x >= (1ul << 8))
             {
                 x >>= 8;
                 n += 8;
@@ -204,7 +204,7 @@ namespace Nethermind.Int256
             int len = 0;
             for (int i = 0; i < 8; i++)
             {
-                if ((x & (((ulong)1) << i)) > 0)
+                if ((x & (1ul << i)) > 0)
                 {
                     len = i + 1;
                 }
@@ -590,6 +590,11 @@ namespace Nethermind.Int256
 
             Span<ulong> quot = stackalloc ulong[8];
             Udivrem(quot, p, m, out res);
+        }
+
+        private static void MulMod(in UInt256 x, in UInt256 y, UInt256 m, out UInt256 res)
+        {
+            MultiplyMod(x, y, m, out res);
         }
 
         public void MultiplyMod(in UInt256 a, in UInt256 m, out UInt256 res) => MultiplyMod(this, a, m, out res);
@@ -1120,7 +1125,7 @@ namespace Nethermind.Int256
             }
         }
 
-        public int Len => 4;
+        public readonly int Len => 4;
 
         public void Convert(out BigInteger big)
         {
