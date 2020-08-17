@@ -71,5 +71,5 @@ namespace Nethermind.Int256.Test
 
         [TestCaseSource(typeof(UnaryOps), nameof(UnaryOps.SignedTestCases))]
         public override void ToString(BigInteger test) => base.ToString(test);
-         }
+    }
 }
