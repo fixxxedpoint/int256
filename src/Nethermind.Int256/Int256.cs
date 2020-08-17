@@ -262,7 +262,7 @@ namespace Nethermind.Int256
 
         public static void Exp(in Int256 b, in Int256 e, out Int256 res)
         {
-            if (e < Zero)
+            if (e.Sign < 0)
             {
                 throw new ArgumentException("exponent must be non-negative");
             }
@@ -361,6 +361,7 @@ namespace Nethermind.Int256
             if (sign >= 0)
             {
                 res = this;
+                return;
             }
             Zero.Subtract(this, out res);
         }
@@ -527,7 +528,7 @@ namespace Nethermind.Int256
             return value.ToString();
         }
 
-        private bool Equals(in Int256 other) => this.value.Equals(other);
+        private bool Equals(in Int256 other) => this.value.Equals(other.value);
 
         public override bool Equals(object obj)
         {
