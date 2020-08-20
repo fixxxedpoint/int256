@@ -86,36 +86,31 @@ namespace Nethermind.Int256
 
         public static void AddMod(in Int256 x, in Int256 y, in Int256 m, out Int256 res)
         {
-            var mt = m;
-            if (mt.IsOne)
+            if (m.IsOne)
             {
                 res = Int256.Zero;
                 return;
             }
 
-            if (m.Sign < 0)
-            {
-                m.Neg(out mt);
-            }
             int xSign = x.Sign;
             int ySign = y.Sign;
             if (xSign < 0 && ySign < 0)
             {
                 x.Neg(out Int256 xNeg);
                 y.Neg(out Int256 yNeg);
-                xNeg.value.AddMod(yNeg.value, mt.value, out UInt256 ures);
+                xNeg.value.AddMod(yNeg.value, m.value, out UInt256 ures);
                 res = new Int256(ures);
                 res.Neg(out res);
             }
             else if (xSign > 0 && ySign > 0)
             {
-                x.value.AddMod(y.value, mt.value, out UInt256 ures);
+                x.value.AddMod(y.value, m.value, out UInt256 ures);
                 res = new Int256(ures);
             }
             else
             {
                 x.Add(y, out res);
-                res.Mod(mt, out res);
+                res.Mod(m, out res);
             }
         }
 
@@ -131,36 +126,31 @@ namespace Nethermind.Int256
 
         public static void SubtractMod(in Int256 x, in Int256 y, in Int256 m, out Int256 res)
         {
-            var mt = m;
-            if (mt.IsOne)
+            if (m.IsOne)
             {
                 res = Int256.Zero;
                 return;
             }
 
-            if (m.Sign < 0)
-            {
-                m.Neg(out mt);
-            }
             int xSign = x.Sign;
             int ySign = y.Sign;
             if (xSign < 0 && ySign > 0)
             {
                 x.Neg(out Int256 xNeg);
-                xNeg.value.AddMod(y.value, mt.value, out UInt256 ures);
+                xNeg.value.AddMod(y.value, m.value, out UInt256 ures);
                 res = new Int256(ures);
                 res.Neg(out res);
             }
             else if (xSign > 0 && ySign < 0)
             {
                 y.Neg(out Int256 yNeg);
-                x.value.AddMod(yNeg.value, mt.value, out UInt256 ures);
+                x.value.AddMod(yNeg.value, m.value, out UInt256 ures);
                 res = new Int256(ures);
             }
             else
             {
                 x.Subtract(y, out res);
-                res.Mod(mt, out res);
+                res.Mod(m, out res);
             }
         }
 
@@ -192,11 +182,6 @@ namespace Nethermind.Int256
 
         public static void MultiplyMod(in Int256 x, in Int256 y, in Int256 m, out Int256 res)
         {
-            var mAbs = m;
-            if (m.Sign < 0)
-            {
-                m.Neg(out mAbs);
-            }
             int xSign = x.Sign;
             int ySign = y.Sign;
             if ((xSign < 0 && ySign >= 0) || (xSign >= 0 && ySign < 0))
@@ -211,7 +196,7 @@ namespace Nethermind.Int256
                 {
                     y.Neg(out yAbs);
                 }
-                xAbs.value.MultiplyMod(yAbs.value, mAbs.value, out UInt256 ures);
+                xAbs.value.MultiplyMod(yAbs.value, m.value, out UInt256 ures);
                 res = new Int256(ures);
                 res.Neg(out res);
             }
@@ -224,7 +209,7 @@ namespace Nethermind.Int256
                     x.Neg(out xAbs);
                     y.Neg(out yAbs);
                 }
-                xAbs.value.MultiplyMod(yAbs.value, mAbs.value, out UInt256 ures);
+                xAbs.value.MultiplyMod(yAbs.value, m.value, out UInt256 ures);
                 res = new Int256(ures);
             }
         }
@@ -313,12 +298,7 @@ namespace Nethermind.Int256
                 bv.Neg(out bv);
                 switchSign = exp.value.Bit(0);
             }
-            var mAbs = m;
-            if (mAbs.Sign < 0)
-            {
-                mAbs.Neg(out mAbs);
-            }
-            UInt256.ExpMod(bv.value, exp.value, mAbs.value, out UInt256 ures);
+            UInt256.ExpMod(bv.value, exp.value, m.value, out UInt256 ures);
             res = new Int256(ures);
             if (switchSign)
             {
@@ -351,7 +331,7 @@ namespace Nethermind.Int256
             {
                 Neg(y, out yIn);
             }
-            UInt256.Mod((UInt256)xIn, (UInt256)yIn, out UInt256 value);
+            UInt256.Mod(xIn.value, yIn.value, out UInt256 value);
             res = new Int256(value);
             if (xs == -1)
             {
@@ -392,7 +372,7 @@ namespace Nethermind.Int256
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static long Rsh(long a, int n)
         {
-            var n1 = n / 2;
+            var n1 = n >> 1;
             var n2 = n - n1;
             return (a >> n1) >> n2;
         }
